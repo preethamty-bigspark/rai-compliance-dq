@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rai-compliance-template"
+version = "0.1.0"
+description = "Template connector for RAI Compliance framework"
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "MIT License"}
+authors = [
+    {name = "Your Name", email = "your.email@example.com"}
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "rai-compliance>=0.1.0",
+    # Add any external libraries your connector depends on
+    # "external-library>=1.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/yourusername/rai-compliance-template"
+Repository = "https://github.com/yourusername/rai-compliance-template"
+
+# This is the most important part - it registers your connector with the framework
+[project.entry-points."rai_compliance.connectors"]
+template_connector = "rai_compliance_template.connector:TemplateConnector"
