@@ -1,0 +1,230 @@
+manifest_version: "1.0"
+ai_project: "Project Name"
+description: "Project description"
+
+metadata:
+  owner: "Team Name"
+  contact: "email@example.com"
+  created_at: "2025-03-21"
+  version: "1.0.0"
+  domain: ["finance", "healthcare", "government"]
+  model_type: "classification"
+  data_type: ["tabular", "text"]  
+  compliance_frameworks: ["GDPR", "NIST AI RMF", "EU AI Act"]
+  intended_use: "Credit risk assessment for loan applications"
+  limitations: "Not suitable for individuals without credit history"
+  last_updated: "2025-03-25"
+  tags: ["production", "regulated", "financial"]
+
+pipeline_stages:
+  - name: "data_ingestion"
+    description: "Data collection and preprocessing"
+    data_type: "tabular"
+    rules: 
+      - "data_quality"
+    # New pipeline stage enhancements
+    id: "stage_001"
+    dependencies: []
+    artifacts:
+      inputs: ["raw_data"]
+      outputs: ["processed_data"]
+    environment: "development"
+      
+  - name: "data_preprocessing"
+    description: "Text data preprocessing"
+    data_type: "text"
+    rules: 
+      - "privacy_compliance"
+    # New pipeline stage enhancements
+    id: "stage_002"
+    dependencies: ["stage_001"]
+    artifacts:
+      inputs: ["processed_data"]
+      outputs: ["preprocessed_text"]
+    environment: "development"
+      
+  - name: "model_training"
+    description: "Model development and training"
+    data_type: "tabular"
+    rules:
+      - "fairness"
+      - "model_performance"
+    # New pipeline stage enhancements
+    id: "stage_003"
+    dependencies: ["stage_002"]
+    artifacts:
+      inputs: ["processed_data"]
+      outputs: ["trained_model"]
+    environment: "development"
+      
+  - name: "model_evaluation"
+    description: "Model testing and validation"
+    data_type: "tabular"
+    rules:
+      - "fairness"
+      - "model_performance"
+    # New pipeline stage enhancements
+    id: "stage_004"
+    dependencies: ["stage_003"]
+    artifacts:
+      inputs: ["trained_model", "test_data"]
+      outputs: ["evaluation_results"]
+    environment: "development"
+      
+  - name: "deployment"
+    description: "Model deployment to production"
+    data_type: "tabular"
+    rules:
+      - "fairness"
+    # New pipeline stage enhancements
+    id: "stage_005"
+    dependencies: ["stage_004"]
+    artifacts:
+      inputs: ["trained_model", "evaluation_results"]
+      outputs: ["deployed_model"]
+    environment: "production"
+      
+  - name: "monitoring"
+    description: "Ongoing model monitoring"
+    data_type: ["tabular", "text"]
+    rules:
+      - "fairness"
+      - "privacy_compliance"
+      - "model_performance"
+    # New pipeline stage enhancements
+    id: "stage_006"
+    dependencies: ["stage_005"]
+    artifacts:
+      inputs: ["deployed_model", "production_data"]
+      outputs: ["monitoring_results"]
+    environment: "production"
+
+rules:
+  - id: "fairness"
+    name: "Fairness Compliance"
+    description: "Ensure model predictions are fair across protected groups."
+    # New rule enhancement
+    severity: "high"
+    tests:
+      - id: "demographic_parity"
+        name: "Demographic Parity"
+        description: "Measure statistical parity across demographic groups."
+        criteria:
+          operator: "<"
+          value: 0.2
+        config:
+          sensitive_attributes: ["gender", "race", "age"]
+        version: "1.0.0"
+        source: "rai_compliance_fairness"
+        dependencies: []
+        applicable_models: ["classification", "regression"]
+        applicable_data: ["tabular"]
+        timeout: 300
+      - id: "equal_opportunity"
+        name: "Equal Opportunity"
+        description: "Measure equal true positive rates across groups."
+        criteria:
+          operator: ">="
+          value: 0.8
+        config:
+          sensitive_attributes: ["gender", "race"]
+        skip: true
+        skip_reason: "Not applicable for models that do not produce binary outcomes"
+        version: "1.0.0"
+        source: "rai_compliance_fairness"
+        dependencies: []
+        applicable_models: ["classification"]
+        applicable_data: ["tabular"]
+        timeout: 300
+          
+  - id: "privacy_compliance"
+    name: "Privacy Compliance"
+    description: "Ensure data privacy requirements are met."
+    # New rule enhancement
+    severity: "critical"
+    tests:
+      - id: "pii_detection"
+        name: "PII Detection"
+        description: "Check for presence of personally identifiable information."
+        criteria:
+          operator: "=="
+          value: 0.0
+        config:
+          entity_types: ["EMAIL", "PHONE", "SSN", "ADDRESS"]
+        # New test enhancements
+        version: "1.0.0"
+        source: "rai_compliance_privacy"
+        dependencies: []
+        applicable_models: ["classification", "regression", "nlp"]
+        applicable_data: ["text", "tabular"]
+        timeout: 180
+
+  - id: "model_performance"
+    name: "Model Performance"
+    description: "Evaluate overall model performance metrics."
+    # New rule enhancement
+    severity: "medium"
+    tests:
+      - id: "accuracy"
+        name: "Accuracy Score"
+        description: "Measure overall accuracy of the model."
+        criteria:
+          operator: ">="
+          value: 0.85
+        config: {}
+        skip: false
+        skip_reason: ""
+        version: "1.0.0"
+        source: "rai_compliance_performance"
+        dependencies: []
+        applicable_models: ["classification"]
+        applicable_data: ["tabular"]
+        timeout: 120
+      - id: "f1_score"
+        name: "F1 Score"
+        description: "Measure the harmonic mean of precision and recall."
+        criteria:
+          operator: ">="
+          value: 0.80
+        config: {}
+        version: "1.0.0"
+        source: "rai_compliance_performance"
+        dependencies: []
+        applicable_models: ["classification"]
+        applicable_data: ["tabular"]
+        timeout: 120
+
+  - id: "data_quality"
+    name: "Data Quality"
+    description: "Ensure the ingested data meets quality standards."
+    # New rule enhancement
+    severity: "high"
+    tests:
+      - id: "missing_values"
+        name: "Missing Value Ratio"
+        description: "Check that missing values do not exceed acceptable limits."
+        criteria:
+          operator: "<"
+          value: 0.05
+        config:
+          columns: []  # List specific columns if needed, or leave empty to check all.
+        version: "1.0.0"
+        source: "rai_compliance_data_quality"
+        dependencies: []
+        applicable_models: []  # Not model-specific
+        applicable_data: ["tabular"]
+        timeout: 60
+      - id: "outlier_detection"
+        name: "Outlier Detection"
+        description: "Check for abnormal data points in key metrics."
+        criteria:
+          operator: "<"
+          value: 0.1
+        config:
+          columns: []  # Define columns to be analyzed.
+        version: "1.0.0"
+        source: "rai_compliance_data_quality"
+        dependencies: []
+        applicable_models: []  # Not model-specific
+        applicable_data: ["tabular"]
+        timeout: 90

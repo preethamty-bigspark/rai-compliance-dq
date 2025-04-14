@@ -1,0 +1,3 @@
+include rai_compliance/*.yaml
+include rai_compliance/*.json
+include README.md
